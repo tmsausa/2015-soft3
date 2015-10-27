@@ -1,23 +1,16 @@
-#!/usr/bin/env python
-import roslib
-import rospy
-from std_msgs.msg import String
-from beginner_tutorials.msg import Hello
+#include "ros/ros.h"
+#include "std_msgs/String.h"
 
-def talker2():
-    pub=rospy.Publisher('chatter2',Hello)
-    rospy.init_node('talker')
-    while not rospy.is_shutdown():
-	str="hello world %s"%rospy.get_time()
-	rospy.loginfo(str)
-	hello=Hello();
-	hello.hello="world";
-	hello.pos.x=0;
-	hello.pos.y=1;
-	hello.pos.z=2;
-	pub.publish(hello);
-	rospy.sleep(1.0)
-if __name__=='__main__':
-    try:
-	talker2()
-    except rospy.ROSInterruptException: pass
+void chatterCallback(const std_msgs::String::ConstPtr& msg)
+{
+  ROS_INFO("I heard: [%s]", msg->data.c_str());
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "listener");
+  ros::NodeHandle n;
+  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::spin();
+  return 0;
+}
